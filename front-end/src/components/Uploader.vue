@@ -1,60 +1,50 @@
 <template>
-  <transition v-if="show" name="modal">
-    <div class="modal-mask">
-      <div class="modal-container">
-        <form class="pure-form" @submit.prevent="upload">
-          <legend>Upload a picture</legend>
-          <fieldset>
-            <input v-model="title" placeholder="Title" />
-          </fieldset>
-          <fieldset>
-            <textarea
-              v-model="description"
-              placeholder="Description"
-            ></textarea>
-          </fieldset>
-          <fieldset>
-            <div class="imageInput" @click="chooseImage">
-              <img v-if="url" :src="url" />
-              <div v-if="!url" class="placeholder">Choose an Image</div>
-              <input
-                class="fileInput"
-                ref="fileInput"
-                type="file"
-                @input="fileChanged"
-              />
+<transition v-if="show" name="modal">
+  <div class="modal-mask">
+    <div class="modal-container">
+      <form class="pure-form" @submit.prevent="upload">
+        <legend>Upload a picture</legend>
+        <fieldset>
+          <input v-model="title" placeholder="Title">
+        </fieldset>
+        <fieldset>
+          <textarea v-model="description" placeholder="Description"></textarea>
+        </fieldset>
+        <fieldset>
+          <div class="imageInput" @click="chooseImage">
+            <img v-if="url" :src="url" />
+            <div v-if="!url" class="placeholder">
+              Choose an Image
             </div>
-            <p v-if="error" class="error">{{ error }}</p>
-          </fieldset>
-          <fieldset class="buttons">
-            <button type="button" @click="close" class="pure-button">
-              Close
-            </button>
-            <button type="submit" class="pure-button pure-button-primary right">
-              Upload
-            </button>
-          </fieldset>
-        </form>
-      </div>
+            <input class="fileInput" ref="fileInput" type="file" @input="fileChanged">
+          </div>
+          <p v-if="error" class="error">{{error}}</p>
+        </fieldset>
+        <fieldset class="buttons">
+          <button type="button" @click="close" class="pure-button">Close</button>
+          <button type="submit" class="pure-button pure-button-primary right">Upload</button>
+        </fieldset>
+      </form>
     </div>
-  </transition>
+  </div>
+</transition>
 </template>
 
 <script>
-import axios from "axios";
+import axios from 'axios';
 export default {
-  name: "Uploader",
+  name: 'Uploader',
   props: {
     show: Boolean,
   },
   data() {
     return {
-      title: "",
-      description: "",
-      url: "",
+      title: '',
+      description: '',
+      url: '',
       file: null,
-      error: "",
-    };
+      error: '',
+    }
   },
   methods: {
     fileChanged(event) {
@@ -62,29 +52,29 @@ export default {
       this.url = URL.createObjectURL(this.file);
     },
     close() {
-      this.$emit("close");
+      this.$emit('close');
     },
     chooseImage() {
-      this.$refs.fileInput.click();
+        this.$refs.fileInput.click()
     },
     async upload() {
       try {
         const formData = new FormData();
-        formData.append("photo", this.file, this.file.name);
-        formData.append("title", this.title);
-        formData.append("description", this.description);
+        formData.append('photo', this.file, this.file.name);
+        formData.append('title', this.title);
+        formData.append('description', this.description);
         await axios.post("/api/photos", formData);
         this.file = null;
         this.url = "";
         this.title = "";
         this.description = "";
-        this.$emit("uploadFinished");
+        this.$emit('uploadFinished');
       } catch (error) {
         this.error = "Error: " + error.response.data.message;
       }
     },
-  },
-};
+  }
+}
 </script>
 
 <style scoped>
@@ -96,7 +86,7 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: rgba(0, 0, 0, .3);
   transition: opacity 0.5s ease;
   display: flex;
   transition: background 0.2s ease-in-out, height 1s ease-in-out;
@@ -112,7 +102,7 @@ export default {
   padding: 20px 30px;
   background-color: #fff;
   border-radius: 2px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
   transition: all 0.5s ease;
 }
 
@@ -154,7 +144,7 @@ textarea {
 }
 
 .placeholder {
-  background: #f0f0f0;
+  background: #F0F0F0;
   width: 200px;
   height: 125px;
   display: flex;
@@ -166,7 +156,7 @@ textarea {
 }
 
 .placeholder:hover {
-  background: #e0e0e0;
+  background: #E0E0E0;
 }
 
 .fileInput {

@@ -1,18 +1,19 @@
 const mongoose = require('mongoose');
 const express = require("express");
 const router = express.Router();
-const users = require("./users.js");
-const User = users.model;
-const validUser = users.valid;
 
 // Configure multer so that it will upload to '/public/images'
 const multer = require('multer')
 const upload = multer({
-  dest: '/var/www/lab5.christianjuniuscs260.me/images/',
+  dest: '../front-end/public/images/',
   limits: {
     fileSize: 10000000
   }
 });
+
+const users = require("./users.js");
+const User = users.model;
+const validUser = users.valid;
 
 const photoSchema = new mongoose.Schema({
   user: {
@@ -29,24 +30,6 @@ const photoSchema = new mongoose.Schema({
 });
 
 const Photo = mongoose.model('Photo', photoSchema);
-
-const commentSchema = new mongoose.Schema({
-  user: {
-    type: mongoose.Schema.ObjectId,
-    ref: 'User'
-  },
-  photo: {
-    type: mongoose.Schema.ObjectId,
-    ref: 'Photo'
-  },
-  comment: String,
-  created: {
-    type: Date,
-    default: Date.now
-  },
-});
-
-const Comment = mongoose.model('Comment', commentSchema);
 
 // upload photo
 router.post("/", validUser, upload.single('photo'), async (req, res) => {
@@ -99,36 +82,15 @@ router.get("/all", async (req, res) => {
     return res.sendStatus(500);
   }
 });
-// get single photos
+
+//get photo by id
 router.get("/:id", async (req, res) => {
+  // return singe photo
   try {
-      let photo = await Photo.findOne({
-          _id: req.params.id
-      }).populate('user');
-    
-      let comments = await Comment.find({
-            photo: photo
-      }).populate('user');
-    
-    return res.send({data: photo, comments: comments});
-  } catch (error) {
-    console.log(error);
-    return res.sendStatus(500);
-  }
-});
-
-
-// Comment submit
-router.post("/comment", validUser, async (req, res) => {
-  // check parameters
-  const comment = new Comment({
-    user: req.user,
-    photo: req.body.photo,
-    comment: req.body.comment,
-  });
-  try {
-    await comment.save();
-    return res.sendStatus(200);
+    let photos = await Photo.findOne({
+      _id: req.params.id
+    });
+    return res.send(photos);
   } catch (error) {
     console.log(error);
     return res.sendStatus(500);

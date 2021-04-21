@@ -192,6 +192,19 @@ router.get('/', validUser, async (req, res) => {
   }
 });
 
+//get user info by id
+router.get('/:id', async (req, res) => {
+  try {
+    let user = await User.findOne({
+      _id: req.params.id
+    });
+    return res.send(user);
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+});
+
 // logout
 router.delete("/", validUser, async (req, res) => {
   try {
